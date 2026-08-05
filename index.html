@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Love Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon-deep: #201014;
+    --maroon-card: #341a22;
+    --gold: #d4a24c;
+    --gold-soft: #e8c988;
+    --rose: #c8395a;
+    --blush: #f4a6b8;
+    --cream: #f7ecd9;
+    --muted: #c9a79c;
+  }
+
+  *{ box-sizing: border-box; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:
+      radial-gradient(circle at 12% 8%, #4a1c2833 0%, transparent 45%),
+      radial-gradient(circle at 88% 92%, #4a1c2844 0%, transparent 50%),
+      var(--maroon-deep);
+    color: var(--cream);
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap{
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 52px 20px 80px;
+  }
+
+  .eyebrow{
+    text-align:center;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--gold-soft);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  h1{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    text-align:center;
+    font-size: clamp(36px, 7.5vw, 54px);
+    margin: 0 0 10px;
+    color: var(--cream);
+    text-shadow: 0 2px 24px #c8395a2e;
+    letter-spacing: 0.01em;
+  }
+
+  .subtitle{
+    text-align:center;
+    color: var(--muted);
+    font-size: 14.5px;
+    font-weight: 300;
+    margin: 0 0 42px;
+    line-height: 1.6;
+  }
+
+  .divider{
+    width: 84px;
+    height: 1.5px;
+    margin: 0 auto 42px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .card{
+    background: linear-gradient(180deg, var(--maroon-card), #2c141c);
+    border: 1px solid #ffffff14;
+    border-radius: 24px;
+    padding: 34px 30px;
+    box-shadow: 0 30px 70px -24px #00000070, inset 0 1px 0 #ffffff0f;
+  }
+
+  .field{ margin-bottom: 20px; }
+
+  label{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--gold-soft);
+    margin-bottom: 7px;
+    letter-spacing: 0.03em;
+  }
+
+  .optional-tag{
+    font-size: 10.5px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  input[type="text"], textarea{
+    width:100%;
+    padding: 14px 16px;
+    border-radius: 13px;
+    border: 1.5px solid #ffffff20;
+    background: #ffffff0b;
+    color: var(--cream);
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    outline: none;
+    transition: border-color .25s ease, background .25s ease, box-shadow .25s ease;
+  }
+  textarea{
+    resize: none;
+    line-height: 1.55;
+    min-height: 78px;
+  }
+  input::placeholder, textarea::placeholder{ color: #d9b9a892; font-weight: 300; }
+  input:focus, textarea:focus{
+    border-color: var(--gold);
+    background: #ffffff14;
+    box-shadow: 0 0 0 3px #d4a24c1f;
+  }
+  input:focus-visible, textarea:focus-visible{
+    outline: none;
+  }
+
+  .desc-field{
+    margin-bottom: 26px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #ffffff14;
+  }
+
+  .char-hint{
+    text-align:right;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 5px;
+    min-height: 14px;
+    transition: color .3s ease;
+  }
+  .char-hint.ready{ color: var(--gold-soft); }
+
+  .calc-btn{
+    width:100%;
+    margin-top: 6px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    border: none;
+    cursor:pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: #241016;
+    background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+    box-shadow: 0 12px 28px -10px #d4a24c60;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .calc-btn:hover{ transform: translateY(-1px); box-shadow: 0 16px 34px -10px #d4a24c85; }
+  .calc-btn:active{ transform: translateY(0px) scale(.99); }
+  .calc-btn:focus-visible{ outline: 2px solid var(--cream); outline-offset: 3px; }
+
+  .error{
+    color: var(--blush);
+    font-size: 12.5px;
+    margin-top: 9px;
+    min-height: 15px;
+    text-align:center;
+  }
+
+  /* ---- Result ---- */
+  #result{
+    margin-top: 8px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .6s cubic-bezier(.22,1,.36,1), opacity .5s ease, margin-top .6s ease;
+  }
+  #result.show{
+    margin-top: 36px;
+    max-height: 900px;
+    opacity: 1;
+  }
+
+  .names{
+    text-align:center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 23px;
+    color: var(--cream);
+    margin-bottom: 20px;
+  }
+  .names .amp{ color: var(--rose); margin: 0 9px; }
+
+  .heart-box{
+    position: relative;
+    width: 200px;
+    margin: 0 auto 6px;
+  }
+
+  .pct-label{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    pointer-events:none;
+  }
+  .pct-num{
+    font-weight: 700;
+    font-size: 42px;
+    color: var(--cream);
+    text-shadow: 0 2px 10px #00000055;
+  }
+  .pct-sign{
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin-top: -4px;
+  }
+
+  #heartFill{
+    transition: y 1.2s cubic-bezier(.22,1,.36,1), height 1.2s cubic-bezier(.22,1,.36,1);
+  }
+
+  .message{
+    text-align:center;
+    font-size: 15.5px;
+    font-weight: 300;
+    color: var(--cream);
+    margin: 20px auto 4px;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .method-note{
+    text-align:center;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin: 10px auto 0;
+    max-width: 380px;
+    line-height: 1.5;
+  }
+
+  .breakdown{
+    margin-top: 32px;
+  }
+  .breakdown-title{
+    font-weight: 500;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    text-align:center;
+    margin-bottom: 18px;
+  }
+  .stat{ margin-bottom: 15px; }
+  .stat-top{
+    display:flex;
+    justify-content:space-between;
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stat-top span:last-child{ color: var(--cream); font-weight:500; }
+  .bar-track{
+    height: 7px;
+    border-radius: 6px;
+    background: #ffffff14;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    width:0%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--rose), var(--blush));
+    transition: width 1.1s cubic-bezier(.22,1,.36,1);
+  }
+
+  .retry{
+    display:block;
+    margin: 28px auto 0;
+    background: none;
+    border: 1.5px solid #ffffff30;
+    color: var(--cream);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 12.5px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor:pointer;
+    transition: border-color .25s, background .25s;
+  }
+  .retry:hover{ border-color: var(--gold); background: #ffffff0a; }
+
+  .disclaimer{
+    text-align:center;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--muted);
+    margin-top: 22px;
+    line-height: 1.6;
+    opacity: .85;
+  }
+
+  /* ---- Coming soon strip ---- */
+  .soon{
+    margin-top: 46px;
+  }
+  .soon-title{
+    text-align:center;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin-bottom: 15px;
+  }
+  .soon-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .soon-item{
+    text-align:center;
+    padding: 15px 8px;
+    border-radius: 14px;
+    background: #ffffff08;
+    border: 1px dashed #ffffff22;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--muted);
+  }
+  .soon-item .emoji{ display:block; font-size: 19px; margin-bottom: 7px; }
+
+  /* petal confetti */
+  .petal{
+    position: fixed;
+    top: -20px;
+    font-size: 16px;
+    pointer-events:none;
+    animation: fall linear forwards;
+    z-index: 10;
+  }
+  @keyframes fall{
+    to{ transform: translateY(105vh) rotate(360deg); opacity: 0.15; }
+  }
+
+  @media (max-width: 420px){
+    .card{ padding: 28px 20px; }
+    .soon-grid{ gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Relationship Insight</div>
+  <h1>The Love Index</h1>
+  <p class="subtitle">A little reflection on your relationship — for fun, not judgment.</p>
+  <div class="divider"></div>
+
+  <div class="card">
+
+    <div class="field desc-field">
+      <label for="desc">Describe your partner <span class="optional-tag">optional, but recommended</span></label>
+      <textarea id="desc" maxlength="220" placeholder="e.g. He remembers the little things and always knows how to make me laugh, even on hard days."></textarea>
+      <div class="char-hint" id="charHint"></div>
+    </div>
+
+    <div class="field">
+      <label for="name1">Your Name</label>
+      <input type="text" id="name1" placeholder="e.g. Him" maxlength="30" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="name2">Partner's Name</label>
+      <input type="text" id="name2" placeholder="e.g. Her" maxlength="30" autocomplete="off">
+    </div>
+
+    <button class="calc-btn" id="calcBtn">Reveal My Score</button>
+    <div class="error" id="errorMsg"></div>
+
+    <div id="result">
+      <div class="names" id="namesLine"></div>
+
+      <div class="heart-box">
+        <svg viewBox="0 0 100 90" width="200" height="180">
+          <defs>
+            <clipPath id="heartClip">
+              <path d="M50 86 C 22 64, 2 43, 2 24 C 2 8, 16 -1, 30 3 C 40 6, 47 13, 50 21 C 53 13, 60 6, 70 3 C 84 -1, 98 8, 98 24 C 98 43, 78 64, 50 86 Z"/>
+            </clipPath>
+            <linearGradient id="heartGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#c8395a"/>
+              <stop offset="100%" stop-color="#f4a6b8"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 86 C 22 64, 2 43, 2 24 C 2 8, 16 -1, 30 3 C 40 6, 47 13, 50 21 C 53 13, 60 6, 70 3 C 84 -1, 98 8, 98 24 C 98 43, 78 64, 50 86 Z"
+                fill="#ffffff10" stroke="#d4a24c" stroke-width="1.4"/>
+          <g clip-path="url(#heartClip)">
+            <rect id="heartFill" x="0" y="90" width="100" height="0" fill="url(#heartGrad)"/>
+          </g>
+        </svg>
+        <div class="pct-label">
+          <div class="pct-num" id="pctNum">0</div>
+          <div class="pct-sign">Love %</div>
+        </div>
+      </div>
+
+      <p class="message" id="messageText"></p>
+      <p class="method-note" id="methodNote"></p>
+
+      <div class="breakdown">
+        <div class="breakdown-title">Compatibility Breakdown</div>
+
+        <div class="stat">
+          <div class="stat-top"><span>Understanding</span><span id="v1">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="b1"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><span>Trust</span><span id="v2">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="b2"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><span>Chemistry</span><span id="v3">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="b3"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><span>Communication</span><span id="v4">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="b4"></div></div>
+        </div>
+      </div>
+
+      <button class="retry" id="retryBtn">Try Again</button>
+    </div>
+
+    <p class="disclaimer">This is a bit of fun, not a real measurement — no website can judge how much two people love each other. That's built by you two, not calculated. 😉</p>
+  </div>
+
+  <div class="soon">
+    <div class="soon-title">Coming Soon</div>
+    <div class="soon-grid">
+      <div class="soon-item"><span class="emoji">♈</span>Zodiac Match</div>
+      <div class="soon-item"><span class="emoji">📝</span>Couple Quiz</div>
+      <div class="soon-item"><span class="emoji">📤</span>Share Card</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function cleanName(s){ return s.toLowerCase().replace(/[^a-z]/g,''); }
+
+  function seededHash(str, salt){
+    let hash = 5381 + salt;
+    for(let i=0;i<str.length;i++){
+      hash = ((hash << 5) + hash + str.charCodeAt(i)) >>> 0;
+    }
+    return hash;
+  }
+
+  function scoreFromSeed(str, salt, min, max){
+    const h = seededHash(str, salt);
+    return min + (h % (max - min + 1));
+  }
+
+  function animateHeart(pct){
+    const fill = document.getElementById('heartFill');
+    const h = pct * 0.9;
+    fill.setAttribute('y', 90 - h);
+    fill.setAttribute('height', h);
+  }
+
+  function countUp(el, target, duration){
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - start) / duration);
+      el.textContent = Math.round(target * t);
+      if(t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function messageFor(pct, described){
+    if(pct >= 97) return described
+      ? "A rare, deep connection — the kind of love people write stories about."
+      : "An exceptional bond. You two clearly know how to make it work.";
+    if(pct >= 90) return "A strong, genuine connection with real potential to grow even further.";
+    if(pct >= 80) return "A solid foundation — keep nurturing it and it'll only get stronger.";
+    return "Early days, but there's clear promise here. Keep investing in each other.";
+  }
+
+  function petals(count){
+    const emojis = ['🌸','💮','🌺'];
+    for(let i=0;i<count;i++){
+      setTimeout(() => {
+        const p = document.createElement('div');
+        p.className = 'petal';
+        p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        p.style.left = Math.random()*100 + 'vw';
+        p.style.animationDuration = (2.5 + Math.random()*2) + 's';
+        p.style.fontSize = (13 + Math.random()*9) + 'px';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 5000);
+      }, i * 90);
+    }
+  }
+
+  const descEl = document.getElementById('desc');
+  const charHint = document.getElementById('charHint');
+  descEl.addEventListener('input', () => {
+    const len = descEl.value.trim().length;
+    if(len === 0){ charHint.textContent = ''; charHint.classList.remove('ready'); }
+    else if(len < 20){ charHint.textContent = `${len} characters — a bit more paints a fuller picture`; charHint.classList.remove('ready'); }
+    else { charHint.textContent = 'Nice — this will factor into your score'; charHint.classList.add('ready'); }
+  });
+
+  function calculate(){
+    const raw1 = document.getElementById('name1').value.trim();
+    const raw2 = document.getElementById('name2').value.trim();
+    const description = descEl.value.trim();
+    const errorEl = document.getElementById('errorMsg');
+    const n1 = cleanName(raw1), n2 = cleanName(raw2);
+
+    if(!n1 || !n2){
+      errorEl.textContent = "Enter both names to reveal your score.";
+      return;
+    }
+    errorEl.textContent = '';
+
+    const described = description.length >= 20;
+    const combined = n1 + '#' + n2 + '#' + description.length;
+
+    let pct;
+    if(described){
+      pct = 97 + (seededHash(combined, 7) % 3); // 97-99
+    } else {
+      pct = 76 + (seededHash(combined, 7) % 22); // 76-97
+    }
+
+    const statMin = described ? 88 : 62;
+    const statMax = described ? 99 : 96;
+    const s1 = scoreFromSeed(combined, 11, statMin, statMax);
+    const s2 = scoreFromSeed(combined, 23, statMin, statMax);
+    const s3 = scoreFromSeed(combined, 37, statMin, statMax);
+    const s4 = scoreFromSeed(combined, 51, statMin, statMax);
+
+    document.getElementById('namesLine').innerHTML =
+      raw1.charAt(0).toUpperCase() + raw1.slice(1) +
+      '<span class="amp">&#10084;</span>' +
+      raw2.charAt(0).toUpperCase() + raw2.slice(1);
+
+    document.getElementById('messageText').textContent = messageFor(pct, described);
+    document.getElementById('methodNote').textContent = described
+      ? "Your description told us this connection runs deep."
+      : "Add a short description above for a fuller reading next time.";
+
+    const result = document.getElementById('result');
+    result.classList.add('show');
+
+    animateHeart(0);
+    setTimeout(() => animateHeart(pct), 50);
+    countUp(document.getElementById('pctNum'), pct, 1150);
+
+    const stats = [[s1,'v1','b1'],[s2,'v2','b2'],[s3,'v3','b3'],[s4,'v4','b4']];
+    stats.forEach(([val, vId, bId]) => {
+      document.getElementById(bId).style.width = '0%';
+      setTimeout(() => { document.getElementById(bId).style.width = val + '%'; }, 80);
+      countUp(document.getElementById(vId), val, 950);
+      setTimeout(() => {
+        document.getElementById(vId).textContent = val + '%';
+      }, 1000);
+    });
+
+    if(pct >= 90) petals(described ? 18 : 12);
+
+    setTimeout(() => {
+      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 120);
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', calculate);
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('name1').value = '';
+    document.getElementById('name2').value = '';
+    descEl.value = '';
+    charHint.textContent = '';
+    document.getElementById('desc').focus();
+  });
+  [document.getElementById('name1'), document.getElementById('name2')].forEach(inp => {
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter') calculate(); });
+  });
+</script>
+</body>
+</html>
